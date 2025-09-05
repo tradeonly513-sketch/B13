@@ -124,15 +124,15 @@
 
 /* Enhanced smooth scrolling with responsive padding */
 html {
-    scroll-behavior: smooth;
     overflow-y: scroll;
     scroll-padding-top: clamp(60px, 8vw, 120px);
+    /* Remove native scroll-behavior as Lenis handles it */
 }
 
 /* Responsive body styling */
 body {
     overflow-x: hidden;
-    overflow-y: auto;
+    overflow-y: scroll; /* Ensure scrollbar space is reserved */
     opacity: 1;
     transition: opacity 0.3s ease-in-out;
     background: var(--bg-dark-primary);
@@ -140,6 +140,10 @@ body {
     color: var(--text-primary);
     font-size: var(--text-base);
     line-height: 1.6;
+    /* Performance optimizations for smooth scrolling */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeSpeed;
 }
 
 /* Loading state */
@@ -920,9 +924,56 @@ body.mobile-menu-open {
 /* Performance optimizations for all devices */
 .gpu-accelerated {
     transform: translateZ(0);
-    will-change: transform, opacity;
+    will-change: transform;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
+    /* Optimize for smooth scrolling */
+    contain: layout style paint;
+}
+
+/* Smooth scrolling performance optimizations */
+.scroll-optimized {
+    contain: layout style paint;
+    content-visibility: auto;
+    contain-intrinsic-size: 0 500px;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Performance optimizations for lower-end devices */
+@media (max-width: 767px) {
+    .gpu-accelerated {
+        will-change: auto; /* Reduce GPU usage on mobile */
+    }
+    
+    /* Simplify animations on mobile for better performance */
+    .floating-panel-dark,
+    .floating-panel {
+        transition-duration: 0.2s;
+    }
+    
+    /* Reduce blur effects on mobile */
+    .glass,
+    .floating-panel,
+    .floating-panel-dark {
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+    }
+}
+
+/* Optimize for 120Hz displays */
+@media (min-resolution: 120dpi) {
+    * {
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    }
 }
 
 /* Enhanced section backgrounds with responsive gradients */
@@ -932,8 +983,10 @@ body.mobile-menu-open {
         rgba(0, 0, 0, 0.98) 50%, 
         rgba(26, 31, 46, 0.95) 100%);
     position: relative;
-    min-height: 100vh;
-    min-height: 100dvh;
+    min-height: 100vh; /* Fallback */
+    min-height: 100dvh; /* Dynamic viewport height */
+    /* Optimize rendering */
+    contain: layout style;
 }
 
 .section-dark-alt {
@@ -942,8 +995,10 @@ body.mobile-menu-open {
         rgba(0, 0, 0, 0.98) 50%, 
         rgba(10, 15, 28, 0.95) 100%);
     position: relative;
-    min-height: 100vh;
-    min-height: 100dvh;
+    min-height: 100vh; /* Fallback */
+    min-height: 100dvh; /* Dynamic viewport height */
+    /* Optimize rendering */
+    contain: layout style;
 }
 
 /* Seamless section transition overlays */

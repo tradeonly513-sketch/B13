@@ -4,13 +4,16 @@ import App from './App.jsx'
 import './index.css'
 import { BrowserRouter } from 'react-router-dom'
 import Stairs from './components/common/Stairs.jsx'
+import SmoothScrollProvider from './components/common/SmoothScrollProvider.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
-      <Stairs>
-          <App />
-      </Stairs>
+      <SmoothScrollProvider>
+        <Stairs>
+            <App />
+        </Stairs>
+      </SmoothScrollProvider>
     </BrowserRouter>
   </React.StrictMode>,
 )

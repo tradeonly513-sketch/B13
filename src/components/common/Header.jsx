@@ -2,12 +2,14 @@ import React, { useRef, useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
+import { useSmoothScroll } from './SmoothScrollProvider'
 
 const Header = () => {
   const headerRef = useRef(null)
   const location = useLocation()
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const { scrollTo } = useSmoothScroll()
 
   // Handle scroll state for subtle background changes
   useEffect(() => {
@@ -83,9 +85,12 @@ const Header = () => {
   const handleSmoothScroll = (e, href) => {
     if (href.startsWith('#')) {
       e.preventDefault()
-      const element = document.getElementById(href.substring(1))
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      const targetId = href.substring(1)
+      if (scrollTo) {
+        scrollTo(`#${targetId}`, {
+          offset: -100, // Account for fixed header
+          duration: 1.5
+        })
       }
     }
     // Close mobile menu after navigation

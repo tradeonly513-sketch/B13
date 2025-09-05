@@ -3,9 +3,11 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/all'
 import { Link } from 'react-router-dom'
+import { useSmoothScroll } from '../common/SmoothScrollProvider'
 
 const Footer = () => {
   const footerRef = useRef(null)
+  const { scrollTo } = useSmoothScroll()
   
   gsap.registerPlugin(ScrollTrigger)
 
@@ -71,14 +73,16 @@ const Footer = () => {
               <li>
                 <button 
                   onClick={() => {
-                    const element = document.getElementById('portfolio')
-                    if (element) {
-                      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                    if (scrollTo) {
+                      scrollTo('#portfolio', {
+                        offset: -100,
+                        duration: 1.5
+                      })
                     }
                   }}
                   className='font-[font1] text-sm sm:text-base lg:text-lg text-layer-1 interactive-hover text-left micro-bounce w-full text-left'
                 >
-                  Our Portfolio0
+                  Our Portfolio
                 </button>
               </li>
               <li>

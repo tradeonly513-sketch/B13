@@ -2,10 +2,12 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { useRef, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
+import { useSmoothScroll } from './SmoothScrollProvider'
 
 const Stairs = (props) => {
 
     const currentPath = useLocation().pathname
+    const { stop, start } = useSmoothScroll()
 
     const stairParentRef = useRef(null)
     const pageRef = useRef(null)
@@ -19,6 +21,9 @@ const Stairs = (props) => {
     useGSAP(function () {
         // Ensure stairs are hidden initially
         gsap.set(stairParentRef.current, { display: 'none' })
+        
+        // Stop smooth scrolling during transition
+        if (stop) stop()
         
         const tl = gsap.timeline()
         tl.to(stairParentRef.current, {
@@ -42,6 +47,10 @@ const Stairs = (props) => {
         tl.to('.stair', {
             y: '0%',
         })
+        tl.call(() => {
+            // Restart smooth scrolling after transition
+            if (start) start()
+        })
 
         gsap.fromTo(pageRef.current, {
             opacity:0,
@@ -51,9 +60,13 @@ const Stairs = (props) => {
             scale: 1,
             duration: 0.8,
             delay: 1.3,
-            ease: "power2.out"
+            ease: "power2.out",
+            onComplete: () => {
+                // Ensure smooth scrolling is active after page load
+                if (start) start()
+            }
         })
-    }, [currentPath])
+    }, [currentPath, stop, start])
     
 
     return (

@@ -1,8 +1,9 @@
 import { Route, Routes } from 'react-router-dom'
-import { Suspense, lazy, useEffect } from 'react'
+import { Suspense, lazy, useEffect, useLayoutEffect } from 'react'
 import LoadingFallback from './components/common/LoadingFallback'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/all'
+import { useSmoothScroll } from './components/common/SmoothScrollProvider'
 
 // Register GSAP plugin once
 gsap.registerPlugin(ScrollTrigger)
@@ -16,14 +17,16 @@ const TermsOfService = lazy(() => import('./pages/TermsOfService'))
 const AffiliateProgram = lazy(() => import('./pages/AffiliateProgram'))
 
 const App = () => {
+  const { lenis } = useSmoothScroll()
+
   useEffect(() => {
-    // ✅ Refresh ScrollTrigger on load
+    // Refresh ScrollTrigger on load and connect with Lenis
     const handleLoad = () => {
       ScrollTrigger.refresh()
     }
     window.addEventListener('load', handleLoad)
 
-    // ✅ Also refresh after React paints (fixes desktop bug)
+    // Refresh after React paints and Lenis initialization
     const raf = requestAnimationFrame(() => {
       ScrollTrigger.refresh()
     })
@@ -34,6 +37,15 @@ const App = () => {
     }
   }, [])
 
+  // Performance optimization: refresh ScrollTrigger when Lenis is ready
+  useLayoutEffect(() => {
+    if (lenis) {
+      const timer = setTimeout(() => {
+        ScrollTrigger.refresh()
+      }, 100)
+      return () => clearTimeout(timer)
+    }
+  }, [lenis])
   return (
     <div className='overflow-x-hidden'>
       <Suspense fallback={<LoadingFallback />}>

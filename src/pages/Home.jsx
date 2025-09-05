@@ -14,9 +14,11 @@ import ContactSection from '../components/home/ContactSection'
 import Footer from '../components/home/Footer'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
+import { useSmoothScroll } from '../components/common/SmoothScrollProvider'
 
 const Home = () => {
   const heroSectionRef = useRef(null)
+  const { lenis } = useSmoothScroll()
 
   // iOS video autoplay optimization
   useEffect(() => {
@@ -61,18 +63,26 @@ const Home = () => {
         y: 0,
         duration: 1.2,
         ease: "power2.out",
-        delay: 0.5
+        delay: 0.5,
+        onComplete: () => {
+          // Ensure ScrollTrigger is refreshed after hero animation
+          if (lenis) {
+            setTimeout(() => {
+              gsap.set('.hero-content', { clearProps: 'all' })
+            }, 100)
+          }
+        }
       }
     )
-  })
+  }, [lenis])
 
   return (
-    <div className='text-white relative overflow-x-hidden'>
+    <div className='text-white relative overflow-x-hidden scroll-optimized'>
       {/* Cinematic Header Overlay */}
       <Header />
       
       {/* Fixed video background */}
-      <div className='h-screen h-[100dvh] w-screen fixed top-0 left-0 z-0'>
+      <div className='h-screen h-[100dvh] w-screen fixed top-0 left-0 z-0 gpu-accelerated'>
         <Video />
         {/* Dark overlay for better text readability */}
         <div className='absolute inset-0 bg-black/50 sm:bg-black/40 lg:bg-black/30 z-10'></div>
@@ -81,36 +91,54 @@ const Home = () => {
       {/* Scrollable content */}
       <div className='relative z-20'>
         {/* Hero Section */}
-        <div ref={heroSectionRef} className='h-screen h-[100dvh] w-screen relative flex flex-col hero-content'>
+        <div ref={heroSectionRef} className='h-screen h-[100dvh] w-screen relative flex flex-col hero-content scroll-optimized'>
           <HomeHeroText />
         </div>
         
         {/* Why Us Section */}
-        <WhyUsSection />
+        <div className="scroll-optimized">
+          <WhyUsSection />
+        </div>
         
         {/* Portfolio Section */}
-        <PortfolioSection />
+        <div className="scroll-optimized">
+          <PortfolioSection />
+        </div>
         
         {/* Stats Section */}
-        <StatsSection />
+        <div className="scroll-optimized">
+          <StatsSection />
+        </div>
         
         {/* Services Section */}
-        <ServicesSection />
+        <div className="scroll-optimized">
+          <ServicesSection />
+        </div>
         
         {/* Process Section */}
-        <ProcessSection />
+        <div className="scroll-optimized">
+          <ProcessSection />
+        </div>
         
         {/* Call-to-Action Section */}
-        <CTASection />
+        <div className="scroll-optimized">
+          <CTASection />
+        </div>
         
         {/* About Us Section */}
-        <AboutSection />
+        <div className="scroll-optimized">
+          <AboutSection />
+        </div>
         
         {/* Contact Section */}
-        <ContactSection />
+        <div className="scroll-optimized">
+          <ContactSection />
+        </div>
         
         {/* Footer Section */}
-        <Footer />
+        <div className="scroll-optimized">
+          <Footer />
+        </div>
       </div>
     </div>
   )

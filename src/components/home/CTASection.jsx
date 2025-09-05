@@ -3,9 +3,11 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/all'
 import { Link } from 'react-router-dom'
+import { useSmoothScroll } from '../common/SmoothScrollProvider'
 
 const CTASection = () => {
   const sectionRef = useRef(null)
+  const { lenis } = useSmoothScroll()
 
   gsap.registerPlugin(ScrollTrigger)
 
@@ -52,7 +54,9 @@ const CTASection = () => {
       clearTimeout(refreshTimeout)
       refreshTimeout = setTimeout(() => {
         requestAnimationFrame(() => {
-          ScrollTrigger.refresh()
+          if (lenis) {
+            ScrollTrigger.refresh()
+          }
         })
       }, 100)
     }
@@ -71,7 +75,7 @@ const CTASection = () => {
       window.removeEventListener('resize', handleResize)
       clearTimeout(refreshTimeout)
     }
-  }, [])
+  }, [lenis])
 
   // Memoized stats data for performance
   const statsData = useMemo(() => [
